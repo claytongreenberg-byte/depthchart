@@ -391,7 +391,7 @@
     }
   }
 
-  // Initialize Default Layout
+  // Initialize Default Controls
   updateControls();
 
   function switchView(team, unit) {
@@ -467,7 +467,6 @@
     `;
   }
 
-  // Modified to pull the Nth matching position via the 'index' parameter
   function getCard(data, posName, index = 0) {
     const items = data.filter(d => d.pos.toUpperCase() === posName.toUpperCase());
     const item = items[index] || {};
@@ -484,20 +483,21 @@
     return `
       <div class="offense-grid">
         <div class="oline-row">
-          ${getCard(data, 'LEFT TACKLE')}
-          ${getCard(data, 'LEFT GUARD')}
-          ${getCard(data, 'CENTER')}
-          ${getCard(data, 'RIGHT GUARD')}
-          ${getCard(data, 'RIGHT TACKLE')}
+          ${getCard(data, 'LEFT TACKLE', 0)}
+          ${getCard(data, 'LEFT GUARD', 0)}
+          ${getCard(data, 'CENTER', 0)}
+          ${getCard(data, 'RIGHT GUARD', 0)}
+          ${getCard(data, 'RIGHT TACKLE', 0)}
         </div>
         <div class="skill-row">
           ${getCard(data, 'WIDE RECEIVER', 0)}
-          ${getCard(data, 'QUARTERBACK')}
-          ${getCard(data, 'TIGHT END')}
+          ${getCard(data, 'QUARTERBACK', 0)}
+          ${getCard(data, 'TIGHT END', 0)}
           ${getCard(data, 'WIDE RECEIVER', 1)}
         </div>
         <div class="extras-row">
-          <div class="extra-box">${getCard(data, 'RUNNING BACK')}</div>
+          <div class="extra-box">${getCard(data, 'RUNNING BACK', 0)}</div>
+          <div class="extra-box">${getCard(data, 'RUNNING BACK', 1)}</div>
           <div class="extra-box">${getCard(data, 'OTHER', 0)}</div>
         </div>
       </div>
@@ -509,8 +509,8 @@
       <div class="defense-grid">
         <div class="dline-row">
           ${getCard(data, 'DEFENSIVE END', 0)}
-          ${getCard(data, 'DEFENSIVE TACKLE')}
-          ${getCard(data, 'NOSE TACKLE')}
+          ${getCard(data, 'DEFENSIVE TACKLE', 0)}
+          ${getCard(data, 'NOSE TACKLE', 0)}
           ${getCard(data, 'DEFENSIVE END', 1)}
         </div>
         <div class="lb-row">
@@ -536,16 +536,16 @@
     return `
       <div class="special-grid">
         <div class="st-row">
-          ${getCard(data, 'KICKER')}
-          ${getCard(data, 'PUNTER')}
-          ${getCard(data, 'LONG SNAPPER')}
-          ${getCard(data, 'HOLDER')}
+          ${getCard(data, 'KICKER', 0)}
+          ${getCard(data, 'KICKER', 1)}
+          ${getCard(data, 'PUNTER', 0)}
+          ${getCard(data, 'LONG SNAPPER', 0)}
         </div>
         <div class="st-row">
+          ${getCard(data, 'HOLDER', 0)}
           ${getCard(data, 'RETURNER', 0)}
           ${getCard(data, 'RETURNER', 1)}
           ${getCard(data, 'OTHER', 0)}
-          ${getCard(data, 'OTHER', 1)}
         </div>
       </div>
     `;
