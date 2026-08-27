@@ -56,6 +56,22 @@
       border-color: #880000;
     }
 
+    .print-btn {
+      background: #28a745;
+      color: white;
+      border: 2px solid #28a745;
+      padding: 8px 16px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .print-btn:hover {
+      background: #218838;
+      border-color: #1e7e34;
+    }
+
     .chart-header {
       border-bottom: 4px solid var(--team-primary);
       padding-bottom: 8px;
@@ -174,6 +190,7 @@
       font-size: 11px;
       font-weight: 900;
       text-transform: uppercase;
+      white-space: normal;
       word-wrap: break-word;
       line-height: 1.1;
     }
@@ -184,6 +201,22 @@
       font-style: italic;
       color: var(--team-accent);
       margin-top: 2px;
+    }
+
+    /* Print Styles */
+    @media print {
+      .controls {
+        display: none !important;
+      }
+      body {
+        background: white;
+        padding: 0;
+      }
+      .container {
+        box-shadow: none;
+        padding: 0;
+        max-width: 100%;
+      }
     }
   </style>
 </head>
@@ -196,7 +229,8 @@
     <button class="tab-btn" data-team="Away" data-unit="OFFENSE">Away Offense</button>
     <button class="tab-btn" data-team="Away" data-unit="DEFENSE">Away Defense</button>
   </div>
-  <div>
+  <div style="display: flex; gap: 10px; align-items: center;">
+    <button class="print-btn" onclick="window.print()">🖨️ Print Chart</button>
     <input type="file" id="csvInput" accept=".csv">
   </div>
 </div>
@@ -218,7 +252,6 @@
     Away: { primary: '#880000', accent: '#cc0000' }
   };
 
-  // Attach button click events cleanly
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', function() {
       const team = this.getAttribute('data-team');
@@ -249,7 +282,6 @@
     renderChart();
   }
 
-  // Parse CSV rows cleanly even with quotes and commas
   function parseCSVLine(text) {
     let ret = [''];
     let inQuote = false;
