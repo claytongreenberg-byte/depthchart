@@ -10,16 +10,20 @@
       --team-accent: #0055a5;
     }
 
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: Arial, Helvetica, sans-serif;
       background-color: #f4f6f9;
       margin: 0;
-      padding: 20px;
+      padding: 15px;
     }
 
     .controls {
-      max-width: 1100px;
-      margin: 0 auto 20px auto;
+      max-width: 1300px;
+      margin: 0 auto 15px auto;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -73,41 +77,43 @@
       border-color: #1e7e34;
     }
 
+    .container {
+      max-width: 1300px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 15px;
+      border-radius: 8px;
+    }
+
     .chart-header {
-      border-bottom: 4px solid var(--team-primary);
-      padding-bottom: 8px;
-      margin-bottom: 25px;
+      border-bottom: 5px solid var(--team-primary);
+      padding-bottom: 6px;
+      margin-bottom: 15px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
     .chart-header h1 {
-      font-size: 26px;
+      font-size: 32px;
+      font-weight: 900;
       color: var(--team-primary);
       margin: 0;
       text-transform: uppercase;
-    }
-
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
+      letter-spacing: 0.5px;
     }
 
     /* Layout Grids */
     .offense-grid, .defense-grid {
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 15px;
     }
 
     .oline-row {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 10px;
+      gap: 8px;
       background: var(--team-primary);
       padding: 6px;
     }
@@ -115,13 +121,13 @@
     .skill-row {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 15px;
+      gap: 12px;
     }
 
     .dline-row {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
+      gap: 10px;
       background: var(--team-primary);
       padding: 6px;
     }
@@ -129,17 +135,17 @@
     .lb-row {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
-      padding: 0 40px;
+      gap: 12px;
+      padding: 0 50px;
     }
 
     .db-row {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 15px;
+      gap: 12px;
     }
 
-    /* Player Cards */
+    /* Player Cards - Max Visibility */
     .position-box {
       border: 3px solid var(--team-primary);
       background-color: #ffffff;
@@ -151,72 +157,128 @@
       background-color: var(--team-primary);
       color: #ffffff;
       text-align: center;
-      font-size: 11px;
+      font-size: 13px;
       font-weight: 900;
       text-transform: uppercase;
-      padding: 4px 2px;
+      padding: 5px 2px;
+      letter-spacing: 0.5px;
     }
 
     .player-slot {
       padding: 6px 8px;
-      min-height: 60px;
+      min-height: 72px;
       display: flex;
       flex-direction: column;
       justify-content: center;
     }
 
     .player-slot.starter {
-      border-bottom: 2px solid #ddd;
+      border-bottom: 3px solid var(--team-primary);
+      background-color: #fafafa;
     }
 
     .player-header {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
+      margin-bottom: 2px;
     }
 
     .player-number {
-      font-size: 24px;
+      font-size: 32px;
       font-weight: 900;
+      line-height: 1;
       color: var(--team-primary);
     }
 
     .player-class {
-      font-size: 11px;
-      font-weight: 800;
-      color: #666;
+      font-size: 13px;
+      font-weight: 900;
+      color: #333;
     }
 
     .player-name {
-      font-size: 11px;
+      font-size: 14px;
       font-weight: 900;
       text-transform: uppercase;
       white-space: normal;
       word-wrap: break-word;
-      line-height: 1.1;
+      line-height: 1.15;
+      color: #000;
     }
 
     .player-pron {
-      font-size: 10px;
-      font-weight: 700;
+      font-size: 11px;
+      font-weight: 800;
       font-style: italic;
       color: var(--team-accent);
-      margin-top: 2px;
+      margin-top: 3px;
     }
 
-    /* Print Styles */
+    /* Optimized Print Formatting for Maximum Paper Coverage */
     @media print {
+      @page {
+        size: landscape;
+        margin: 0.25in;
+      }
+
       .controls {
         display: none !important;
       }
+
       body {
-        background: white;
+        background: #fff;
         padding: 0;
+        margin: 0;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
       }
+
       .container {
         box-shadow: none;
         padding: 0;
-        max-width: 100%;
+        margin: 0;
+        max-width: 100% !important;
+        width: 100% !important;
+      }
+
+      .chart-header {
+        margin-bottom: 10px;
+        padding-bottom: 4px;
+      }
+
+      .chart-header h1 {
+        font-size: 28px;
+      }
+
+      .offense-grid, .defense-grid {
+        gap: 10px;
+      }
+
+      .position-title {
+        font-size: 12px;
+        padding: 4px 2px;
+      }
+
+      .player-slot {
+        min-height: 62px;
+        padding: 4px 6px;
+      }
+
+      .player-number {
+        font-size: 28px;
+      }
+
+      .player-name {
+        font-size: 13px;
+      }
+
+      .player-class {
+        font-size: 12px;
+      }
+
+      .player-pron {
+        font-size: 10px;
       }
     }
   </style>
@@ -225,7 +287,10 @@
 
 <div class="controls">
   <div class="tab-group" id="tabGroup">
-    <!-- Dynamic Team Buttons Render Here -->
+    <button class="tab-btn active-home" data-team="Home" data-unit="OFFENSE">Home OFFENSE</button>
+    <button class="tab-btn" data-team="Home" data-unit="DEFENSE">Home DEFENSE</button>
+    <button class="tab-btn" data-team="Away" data-unit="OFFENSE">Away OFFENSE</button>
+    <button class="tab-btn" data-team="Away" data-unit="DEFENSE">Away DEFENSE</button>
   </div>
   <div style="display: flex; gap: 10px; align-items: center;">
     <button class="print-btn" onclick="window.print()">🖨️ Print Chart</button>
@@ -235,28 +300,38 @@
 
 <div class="container">
   <div class="chart-header">
-    <h1 id="chartTitle">LOAD CSV FILE TO VIEW DEPTH CHART</h1>
+    <h1 id="chartTitle">HOME OFFENSE</h1>
   </div>
   <div id="depthChartContent"></div>
 </div>
 
 <script>
   let rawData = [];
-  let currentTeam = '';
+  let currentTeam = 'Home';
   let currentUnit = 'OFFENSE';
-  let availableTeams = [];
+  let availableTeams = ['Home', 'Away'];
 
-  // Configurable primary & accent colors for specific teams
   const teamColors = {
     'HOME': { primary: '#003366', accent: '#0055a5' },
     'AWAY': { primary: '#880000', accent: '#cc0000' }
   };
 
+  function attachButtonEvents() {
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.onclick = function() {
+        const team = this.getAttribute('data-team');
+        const unit = this.getAttribute('data-unit');
+        switchView(team, unit);
+      };
+    });
+  }
+
+  attachButtonEvents();
+
   function setTeamColors(teamName) {
     const key = teamName.toUpperCase();
     const isFirstTeam = availableTeams.indexOf(teamName) === 0;
     
-    // Use preset color if mapped, otherwise default Team 1 to Blue and Team 2 to Red
     const colors = teamColors[key] || (isFirstTeam 
       ? { primary: '#003366', accent: '#0055a5' } 
       : { primary: '#880000', accent: '#cc0000' });
@@ -277,13 +352,11 @@
         btn.setAttribute('data-unit', unit);
         btn.innerText = `${team} ${unit}`;
         
-        btn.addEventListener('click', function() {
-          switchView(team, unit);
-        });
-
         tabGroup.appendChild(btn);
       });
     });
+
+    attachButtonEvents();
 
     if (availableTeams.length > 0) {
       switchView(availableTeams[0], 'OFFENSE');
@@ -382,7 +455,7 @@
           ${getCard(data, 'WIDE RECEIVER (Z)')}
         </div>
         <div style="display:flex; justify-content:center;">
-          <div style="width:230px;">
+          <div style="width:260px;">
             ${getCard(data, 'RUNNING BACK')}
           </div>
         </div>
@@ -425,7 +498,6 @@
 
       const headers = parseCSVLine(lines[0]).map(h => h.toUpperCase());
       
-      // Look for TEAM column; default to Column 0 (Column A) if not explicitly matched by header
       let teamIdx = headers.indexOf('TEAM');
       if (teamIdx === -1) teamIdx = 0;
 
