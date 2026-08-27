@@ -32,6 +32,7 @@
     .tab-group {
       display: flex;
       gap: 10px;
+      flex-wrap: wrap;
     }
 
     .tab-btn {
@@ -223,11 +224,8 @@
 <body>
 
 <div class="controls">
-  <div class="tab-group">
-    <button class="tab-btn active-home" data-team="Home" data-unit="OFFENSE">Home Offense</button>
-    <button class="tab-btn" data-team="Home" data-unit="DEFENSE">Home Defense</button>
-    <button class="tab-btn" data-team="Away" data-unit="OFFENSE">Away Offense</button>
-    <button class="tab-btn" data-team="Away" data-unit="DEFENSE">Away Defense</button>
+  <div class="tab-group" id="tabGroup">
+    <!-- Dynamic Team Buttons Render Here -->
   </div>
   <div style="display: flex; gap: 10px; align-items: center;">
     <button class="print-btn" onclick="window.print()">🖨️ Print Chart</button>
@@ -237,33 +235,59 @@
 
 <div class="container">
   <div class="chart-header">
-    <h1 id="chartTitle">HOME OFFENSE</h1>
+    <h1 id="chartTitle">LOAD CSV FILE TO VIEW DEPTH CHART</h1>
   </div>
   <div id="depthChartContent"></div>
 </div>
 
 <script>
   let rawData = [];
-  let currentTeam = 'Home';
+  let currentTeam = '';
   let currentUnit = 'OFFENSE';
+  let availableTeams = [];
 
+  // Configurable primary & accent colors for specific teams
   const teamColors = {
-    Home: { primary: '#003366', accent: '#0055a5' },
-    Away: { primary: '#880000', accent: '#cc0000' }
+    'HOME': { primary: '#003366', accent: '#0055a5' },
+    'AWAY': { primary: '#880000', accent: '#cc0000' }
   };
 
-  document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-      const team = this.getAttribute('data-team');
-      const unit = this.getAttribute('data-unit');
-      switchView(team, unit);
-    });
-  });
-
-  function setTeamColors(team) {
-    const colors = teamColors[team] || teamColors.Home;
+  function setTeamColors(teamName) {
+    const key = teamName.toUpperCase();
+    const isFirstTeam = availableTeams.indexOf(teamName) === 0;
+    
+    // Use preset color if mapped, otherwise default Team 1 to Blue and Team 2 to Red
+    const colors = teamColors[key] || (isFirstTeam 
+      ? { primary: '#003366', accent: '#0055a5' } 
+      : { primary: '#880000', accent: '#cc0000' });
+      
     document.documentElement.style.setProperty('--team-primary', colors.primary);
     document.documentElement.style.setProperty('--team-accent', colors.accent);
+  }
+
+  function updateControls() {
+    const tabGroup = document.getElementById('tabGroup');
+    tabGroup.innerHTML = '';
+
+    availableTeams.forEach((team) => {
+      ['OFFENSE', 'DEFENSE'].forEach(unit => {
+        const btn = document.createElement('button');
+        btn.className = 'tab-btn';
+        btn.setAttribute('data-team', team);
+        btn.setAttribute('data-unit', unit);
+        btn.innerText = `${team} ${unit}`;
+        
+        btn.addEventListener('click', function() {
+          switchView(team, unit);
+        });
+
+        tabGroup.appendChild(btn);
+      });
+    });
+
+    if (availableTeams.length > 0) {
+      switchView(availableTeams[0], 'OFFENSE');
+    }
   }
 
   function switchView(team, unit) {
@@ -274,7 +298,8 @@
     document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.className = 'tab-btn';
       if (btn.getAttribute('data-team') === team && btn.getAttribute('data-unit') === unit) {
-        btn.classList.add(team === 'Home' ? 'active-home' : 'active-away');
+        const isFirstTeam = availableTeams.indexOf(team) === 0;
+        btn.classList.add(isFirstTeam ? 'active-home' : 'active-away');
       }
     });
 
@@ -399,14 +424,24 @@
       if (lines.length < 2) return;
 
       const headers = parseCSVLine(lines[0]).map(h => h.toUpperCase());
+      
+      // Look for TEAM column; default to Column 0 (Column A) if not explicitly matched by header
+      let teamIdx = headers.indexOf('TEAM');
+      if (teamIdx === -1) teamIdx = 0;
+
       const getIdx = (name) => headers.indexOf(name);
 
       rawData = [];
+      const teamsFound = new Set();
+
       for (let i = 1; i < lines.length; i++) {
         const cols = parseCSVLine(lines[i]);
         if (cols[getIdx('POSITION')]) {
+          const teamName = cols[teamIdx] || 'Team';
+          teamsFound.add(teamName);
+          
           rawData.push({
-            team: cols[getIdx('TEAM')] || 'Home',
+            team: teamName,
             unit: cols[getIdx('UNIT')] || 'OFFENSE',
             pos: cols[getIdx('POSITION')],
             sNum: cols[getIdx('STARTER_NUM')],
@@ -420,7 +455,9 @@
           });
         }
       }
-      renderChart();
+      
+      availableTeams = Array.from(teamsFound);
+      updateControls();
     };
     reader.readAsText(file);
   });
