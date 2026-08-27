@@ -82,13 +82,14 @@
     .player-details {
       flex-grow: 1;
     }
-
-    .player-name {
-      font-weight: 700;
-      font-size: 1.1rem;
-      line-height: 1.2;
-      color: #111;
-    }
+.player-name {
+  font-size: 0.85rem;          /* Reduce font size so longer names fit */
+  white-space: normal;         /* Allow text to wrap to a second line */
+  word-break: break-word;      /* Break long last names if necessary */
+  overflow: visible;           /* Ensure text isn't hidden */
+  text-overflow: clip;         /* Remove automatic "..." truncating */
+  line-height: 1.1;            /* Keep stacked lines tight */
+}
 
     .player-pronunciation {
       font-size: 0.85rem;
