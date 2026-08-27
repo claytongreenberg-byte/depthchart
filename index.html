@@ -3,181 +3,326 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>District 6-6A Live Roster & Lineup</title>
+  <title>Trinity Trojans Offense - Field Depth Chart</title>
   <style>
-    :root {
-      --primary-color: #003366;
-      --accent-color: #d9534f;
-      --bg-color: #f4f6f9;
-      --card-bg: #ffffff;
-      --text-muted: #6c757d;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--bg-color);
-      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: #ffffff;
       padding: 20px;
-      color: #333;
+      color: #000000;
     }
 
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    header {
-      text-align: center;
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 4px solid #003366;
+      padding-bottom: 8px;
       margin-bottom: 25px;
     }
 
-    h1 {
-      margin: 0 0 5px 0;
-      color: var(--primary-color);
+    .chart-header h1 {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-transform: uppercase;
     }
 
-    .subtitle {
-      font-weight: 600;
-      color: var(--text-muted);
-      margin: 0 0 15px 0;
-    }
-
-    .district-badge {
-      display: inline-block;
-      background: var(--primary-color);
-      color: #fff;
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 0.85rem;
+    .chart-header .meta {
+      font-size: 14px;
       font-weight: bold;
+    }
+
+    /* Formation Layout Container */
+    .field-container {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* Offensive Line Row */
+    .oline-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      border: 6px solid #000000;
+      padding: 6px;
+      background-color: #000000;
+    }
+
+    /* Skill Positions Grid */
+    .skill-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .backfield-row {
+      display: flex;
+      justify-content: center;
+    }
+
+    .backfield-row .position-box {
+      width: 220px;
+    }
+
+    /* Individual Position Card Container */
+    .position-box {
+      border: 4px solid #000000;
+      background-color: #ffffff;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .position-title {
+      background-color: #ffffff;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      padding: 4px 2px;
+      border-bottom: 3px solid #000000;
       letter-spacing: 0.5px;
     }
 
-    .roster-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 15px;
-      margin-top: 20px;
+    /* Player Slots (Starter on top, Backup below) */
+    .player-slot {
+      padding: 6px 8px;
+      min-height: 68px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
 
-    .player-card {
-      background: var(--card-bg);
-      border-radius: 8px;
-      padding: 15px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    .player-slot:first-of-type {
+      border-bottom: 3px solid #000000;
+    }
+
+    .player-header {
       display: flex;
-      align-items: center;
-      border-left: 4px solid var(--primary-color);
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 2px;
     }
 
     .player-number {
-      font-size: 1.8rem;
+      font-size: 32px;
+      font-weight: 900;
+      line-height: 0.9;
+    }
+
+    .player-class {
+      font-size: 11px;
       font-weight: 800;
-      color: var(--primary-color);
-      min-width: 45px;
-      text-align: center;
-      margin-right: 15px;
+      color: #003366;
+      text-transform: uppercase;
     }
 
-    .player-details {
-      flex-grow: 1;
+    /* Dynamic Fitting for Player Names */
+    .player-name {
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 1.15;
+      white-space: normal;
+      word-wrap: break-word;
+      overflow: visible;
     }
-.player-name {
-  font-size: 0.85rem;          /* Reduce font size so longer names fit */
-  white-space: normal;         /* Allow text to wrap to a second line */
-  word-break: break-word;      /* Break long last names if necessary */
-  overflow: visible;           /* Ensure text isn't hidden */
-  text-overflow: clip;         /* Remove automatic "..." truncating */
-  line-height: 1.1;            /* Keep stacked lines tight */
-}
 
-    .player-pronunciation {
-      font-size: 0.85rem;
+    .player-pron {
+      font-size: 10px;
+      font-weight: 700;
       font-style: italic;
-      color: var(--accent-color);
+      color: #003366;
       margin-top: 2px;
-      min-height: 1.1em; /* Preserves layout height even if empty */
+      line-height: 1;
     }
 
-    .player-meta {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-
-    .loading {
-      text-align: center;
-      padding: 40px;
-      color: var(--text-muted);
+    /* CSV Upload Controls Bar */
+    .upload-bar {
+      max-width: 1100px;
+      margin: 0 auto 20px auto;
+      padding: 10px;
+      background: #f4f6f9;
+      border: 1px solid #ccc;
+      display: flex;
+      align-items: center;
+      gap: 15px;
     }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <header>
-    <h1>Game Day Lineup</h1>
-    <p class="subtitle">UIL District 6-6A</p>
-    <div class="district-badge">
-      Coppell • RISD (Berkner, LH, Pearce, Richardson) • PISD (Plano, East, West)
-    </div>
-  </header>
+<div class="upload-bar">
+  <label for="csvFile"><strong>Load CSV File:</strong></label>
+  <input type="file" id="csvFile" accept=".csv">
+</div>
 
-  <div id="roster-container" class="roster-grid">
-    <div class="loading">Loading lineup data...</div>
+<div class="field-container">
+  <div class="chart-header">
+    <h1>TRINITY TROJANS OFFENSE</h1>
+    <div class="meta">HEAD COACH / OC: ____________________</div>
+  </div>
+
+  <!-- Offensive Line (5 Positions Across) -->
+  <div class="oline-row">
+    <div class="position-box" data-pos="LEFT TACKLE">
+      <div class="position-title">LEFT TACKLE</div>
+      <div class="player-slot starter"></div>
+      <div class="player-slot backup"></div>
+    </div>
+    <div class="position-box" data-pos="LEFT GUARD">
+      <div class="position-title">LEFT GUARD</div>
+      <div class="player-slot starter"></div>
+      <div class="player-slot backup"></div>
+    </div>
+    <div class="position-box" data-pos="CENTER">
+      <div class="position-title">CENTER</div>
+      <div class="player-slot starter"></div>
+      <div class="player-slot backup"></div>
+    </div>
+    <div class="position-box" data-pos="RIGHT GUARD">
+      <div class="position-title">RIGHT GUARD</div>
+      <div class="player-slot starter"></div>
+      <div class="player-slot backup"></div>
+    </div>
+    <div class="position-box" data-pos="RIGHT TACKLE">
+      <div class="position-title">RIGHT TACKLE</div>
+      <div class="player-slot starter"></div>
+      <div class="player-slot backup"></div>
+    </div>
+  </div>
+
+  <!-- Skill Positions Row -->
+  <div class="skill-row">
+    <div class="position-box" data-pos="WIDE RECEIVER (X)">
+      <div class="position-title">WIDE RECEIVER (X)</div>
+      <div class="player-slot starter"></div>
+      <div class="player-slot backup"></div>
+    </div>
+    <div class="position-box" data-pos="QUARTERBACK">
+      <div class="position-title">QUARTERBACK</div>
+      <div class="player-slot starter"></div>
+      <div class="player-slot backup"></div>
+    </div>
+    <div class="position-box" data-pos="TIGHT END (Y)">
+      <div class="position-title">TIGHT END (Y)</div>
+      <div class="player-slot starter"></div>
+      <div class="player-slot backup"></div>
+    </div>
+    <div class="position-box" data-pos="WIDE RECEIVER (Z)">
+      <div class="position-title">WIDE RECEIVER (Z)</div>
+      <div class="player-slot starter"></div>
+      <div class="player-slot backup"></div>
+    </div>
+  </div>
+
+  <!-- Backfield Row -->
+  <div class="backfield-row">
+    <div class="position-box" data-pos="RUNNING BACK">
+      <div class="position-title">RUNNING BACK</div>
+      <div class="player-slot starter"></div>
+      <div class="player-slot backup"></div>
+    </div>
   </div>
 </div>
 
 <script>
-  // Replace with your published Google Sheet JSON endpoint or Apps Script Web App URL
-  const GOOGLE_SHEET_JSON_URL = 'YOUR_GOOGLE_SCHED_OR_APPS_SCRIPT_URL_HERE';
+  // Sample Data matching your Trinity dataset with Pronunciations included
+  const defaultData = [
+    { pos: "LEFT TACKLE", sNum: "58", sName: "CAMERON HOWELL", sPron: "", sCl: "JR", bNum: "55", bName: "TYSON BUTLER", bPron: "", bCl: "SR" },
+    { pos: "LEFT GUARD", sNum: "78", sName: "JOSH DIMSDALE", sPron: "", sCl: "JR", bNum: "71", bName: "CAMERON BULLOCK", bPron: "", bCl: "SR" },
+    { pos: "CENTER", sNum: "63", sName: "VILIAMI FINAU", sPron: "vee-lee-AH-mee fee-NOW", sCl: "SR", bNum: "53", bName: "ASHTON CHANTHANOUVONG", bPron: "chan-thah-VONG", bCl: "SR" },
+    { pos: "RIGHT GUARD", sNum: "50", sName: "FILI MOSE", sPron: "FEE-lee MO-say", sCl: "SR", bNum: "60", bName: "JASON MARTENY", bPron: "", bCl: "JR" },
+    { pos: "RIGHT TACKLE", sNum: "74", sName: "KAVA AFUNGIA", sPron: "KAH-vah ah-FOONG-ee-ah", sCl: "JR", bNum: "64", bName: "MIKE FATIAU SILIGA", bPron: "FAH-tee-ow see-LING-ah", bCl: "JR" },
+    { pos: "WIDE RECEIVER (X)", sNum: "81", sName: "CAMERON HAYES", sPron: "", sCl: "SR", bNum: "11", bName: "RICOH SANCHEZ-SMITH", bPron: "", bCl: "SR" },
+    { pos: "QUARTERBACK", sNum: "2", sName: "MACK LINEWEAVER", sPron: "", sCl: "SR", bNum: "3", bName: "CADEN TREVINO", bPron: "truh-VEEN-yo", bCl: "JR" },
+    { pos: "TIGHT END (Y)", sNum: "87", sName: "BRENDON CARY", sPron: "", sCl: "SR", bNum: "9", bName: "KOHEN FIEFIA", bPron: "CO-hen fee-EF-ee-ah", bCl: "SR" },
+    { pos: "WIDE RECEIVER (Z)", sNum: "8", sName: "KEVIN KROMAH", sPron: "CROW-mah", sCl: "SR", bNum: "14", bName: "CARMELLO GRAY", bPron: "", bCl: "SO" },
+    { pos: "RUNNING BACK", sNum: "5", sName: "MARCUS TURNER", sPron: "", sCl: "SR", bNum: "21", bName: "PRINCE NGANDU", bPron: "en-GAHN-doo", bCl: "JR" }
+  ];
 
-  async function loadRoster() {
-    try {
-      const response = await fetch(GOOGLE_SHEET_JSON_URL);
-      const data = await response.json();
-      renderRoster(data);
-    } catch (error) {
-      console.error('Error fetching roster data:', error);
-      // Fallback sample rendering for display/testing
-      renderRoster([
-        { number: "10", name: "Chris Martinez", pronunciation: "MAR-tee-nez", position: "QB", class: "Sr." },
-        { number: "52", name: "Alexander Szymanski", pronunciation: "shih-MAN-skee", position: "LB", class: "Jr." },
-        { number: "88", name: "Jordan Smith", pronunciation: "", position: "WR", class: "Sr." }
-      ]);
+  function renderSlot(container, num, name, pron, classYr) {
+    if (!name) {
+      container.innerHTML = '';
+      return;
     }
+    const pronHtml = pron ? `<div class="player-pron">"${pron}"</div>` : '';
+    container.innerHTML = `
+      <div class="player-header">
+        <span class="player-number">${num || ''}</span>
+        <span class="player-class">${classYr || ''}</span>
+      </div>
+      <div class="player-name">${name}</div>
+      ${pronHtml}
+    `;
   }
 
-  function renderRoster(players) {
-    const container = document.getElementById('roster-container');
-    container.innerHTML = '';
-
-    players.forEach(player => {
-      const card = document.createElement('div');
-      card.className = 'player-card';
-
-      const pronunciationHtml = player.pronunciation 
-        ? `<div class="player-pronunciation">"${escapeHtml(player.pronunciation)}"</div>`
-        : `<div class="player-pronunciation"></div>`;
-
-      card.innerHTML = `
-        <div class="player-number">#${escapeHtml(String(player.number))}</div>
-        <div class="player-details">
-          <div class="player-name">${escapeHtml(player.name)}</div>
-          ${pronunciationHtml}
-          <div class="player-meta">${escapeHtml(player.position)} • ${escapeHtml(player.class)}</div>
-        </div>
-      `;
-      container.appendChild(card);
+  function populateChart(records) {
+    records.forEach(row => {
+      const box = document.querySelector(`.position-box[data-pos="${row.pos}"]`);
+      if (box) {
+        renderSlot(box.querySelector('.starter'), row.sNum, row.sName, row.sPron, row.sCl);
+        renderSlot(box.querySelector('.backup'), row.bNum, row.bName, row.bPron, row.bCl);
+      }
     });
   }
 
-  function escapeHtml(str) {
-    return String(str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  }
+  // Handle CSV Upload and parse columns flexibly by header name
+  document.getElementById('csvFile').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
 
-  // Initial call
-  loadRoster();
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+      const lines = evt.target.result.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+      if (lines.length < 2) return;
+
+      const headers = lines[0].split(',').map(h => h.trim().toUpperCase());
+      
+      const getIdx = (name) => headers.indexOf(name);
+      const posIdx = getIdx('POSITION');
+      const sNumIdx = getIdx('STARTER_NUM');
+      const sNameIdx = getIdx('STARTER_NAME');
+      const sPronIdx = getIdx('STARTER_PRON');
+      const sClIdx = getIdx('STARTER_CL');
+      const bNumIdx = getIdx('BACKUP_NUM');
+      const bNameIdx = getIdx('BACKUP_NAME');
+      const bPronIdx = getIdx('BACKUP_PRON');
+      const bClIdx = getIdx('BACKUP_CL');
+
+      const records = [];
+      for (let i = 1; i < lines.length; i++) {
+        const cols = lines[i].split(',').map(c => c.trim().replace(/^"(.*)"$/, '$1'));
+        if (cols[posIdx]) {
+          records.push({
+            pos: cols[posIdx],
+            sNum: cols[sNumIdx] || '',
+            sName: cols[sNameIdx] || '',
+            sPron: sPronIdx !== -1 ? cols[sPronIdx] : '',
+            sCl: cols[sClIdx] || '',
+            bNum: cols[bNumIdx] || '',
+            bName: cols[bNameIdx] || '',
+            bPron: bPronIdx !== -1 ? cols[bPronIdx] : '',
+            bCl: cols[bClIdx] || ''
+          });
+        }
+      }
+      populateChart(records);
+    };
+    reader.readAsText(file);
+  });
+
+  // Load default dataset on boot
+  populateChart(defaultData);
 </script>
 
 </body>
