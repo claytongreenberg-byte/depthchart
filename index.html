@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Live Depth Chart - Offense & Defense</title>
+  <title>Live Depth Chart - Offense, Defense, Special Teams</title>
   <style>
     :root {
       --team-primary: #003366; 
@@ -40,13 +40,14 @@
     }
 
     .tab-btn {
-      padding: 8px 16px;
+      padding: 8px 12px;
       border: 2px solid #ccc;
       background: #fff;
       font-weight: bold;
       cursor: pointer;
       border-radius: 4px;
       transition: all 0.2s ease;
+      font-size: 13px;
     }
 
     .tab-btn.active-home {
@@ -120,10 +121,10 @@
     }
 
     /* Layout Grids */
-    .offense-grid, .defense-grid {
+    .offense-grid, .defense-grid, .special-grid {
       display: flex;
       flex-direction: column;
-      gap: 15px;
+      gap: 12px;
     }
 
     .oline-row {
@@ -155,10 +156,20 @@
       padding: 0 50px;
     }
 
-    .db-row {
+    .db-row, .st-row {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 12px;
+    }
+
+    .extras-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .extra-box {
+      width: 250px;
     }
 
     /* Player Cards */
@@ -182,7 +193,7 @@
 
     .player-slot {
       padding: 6px 8px;
-      min-height: 72px;
+      min-height: 68px;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -201,7 +212,7 @@
     }
 
     .player-number {
-      font-size: 32px;
+      font-size: 30px;
       font-weight: 900;
       line-height: 1;
       color: var(--team-primary);
@@ -235,7 +246,7 @@
     @media print {
       @page {
         size: landscape;
-        margin: 0.25in;
+        margin: 0.2in;
       }
 
       .controls {
@@ -264,16 +275,16 @@
       }
 
       .chart-header {
-        margin-bottom: 10px;
+        margin-bottom: 8px;
         padding-bottom: 4px;
       }
 
       .chart-header h1 {
-        font-size: 28px;
+        font-size: 26px;
       }
 
-      .offense-grid, .defense-grid {
-        gap: 10px;
+      .offense-grid, .defense-grid, .special-grid {
+        gap: 8px;
       }
 
       .position-title {
@@ -282,20 +293,20 @@
       }
 
       .player-slot {
-        min-height: 62px;
+        min-height: 52px;
         padding: 4px 6px;
       }
 
       .player-number {
-        font-size: 28px;
+        font-size: 24px;
       }
 
       .player-name {
-        font-size: 13px;
+        font-size: 12px;
       }
 
       .player-class {
-        font-size: 12px;
+        font-size: 11px;
       }
 
       .player-pron {
@@ -308,10 +319,7 @@
 
 <div class="controls">
   <div class="tab-group" id="tabGroup">
-    <button class="tab-btn active-home" data-team="Home" data-unit="OFFENSE">Home OFFENSE</button>
-    <button class="tab-btn" data-team="Home" data-unit="DEFENSE">Home DEFENSE</button>
-    <button class="tab-btn" data-team="Away" data-unit="OFFENSE">Away OFFENSE</button>
-    <button class="tab-btn" data-team="Away" data-unit="DEFENSE">Away DEFENSE</button>
+    <!-- Populated Dynamically -->
   </div>
   <div style="display: flex; gap: 10px; align-items: center;">
     <button class="blank-btn" onclick="printBlankSheets()">📝 Blank Hand-Fill Sheets</button>
@@ -332,6 +340,7 @@
   let currentTeam = 'Home';
   let currentUnit = 'OFFENSE';
   let availableTeams = ['Home', 'Away'];
+  const units = ['OFFENSE', 'DEFENSE', 'SPECIAL TEAMS'];
 
   const teamColors = {
     'HOME': { primary: '#003366', accent: '#0055a5' },
@@ -347,8 +356,6 @@
       };
     });
   }
-
-  attachButtonEvents();
 
   function setTeamColors(teamName) {
     const key = teamName.toUpperCase();
@@ -367,13 +374,12 @@
     tabGroup.innerHTML = '';
 
     availableTeams.forEach((team) => {
-      ['OFFENSE', 'DEFENSE'].forEach(unit => {
+      units.forEach(unit => {
         const btn = document.createElement('button');
         btn.className = 'tab-btn';
         btn.setAttribute('data-team', team);
         btn.setAttribute('data-unit', unit);
         btn.innerText = `${team} ${unit}`;
-        
         tabGroup.appendChild(btn);
       });
     });
@@ -384,6 +390,9 @@
       switchView(availableTeams[0], 'OFFENSE');
     }
   }
+
+  // Initialize Default Layout
+  updateControls();
 
   function switchView(team, unit) {
     currentTeam = team;
@@ -436,8 +445,10 @@
 
     if (currentUnit === 'OFFENSE') {
       content.innerHTML = buildOffenseHTML(filtered);
-    } else {
+    } else if (currentUnit === 'DEFENSE') {
       content.innerHTML = buildDefenseHTML(filtered);
+    } else {
+      content.innerHTML = buildSpecialTeamsHTML(filtered);
     }
   }
 
@@ -456,8 +467,10 @@
     `;
   }
 
-  function getCard(data, posName) {
-    const item = data.find(d => d.pos.toUpperCase() === posName.toUpperCase()) || {};
+  // Modified to pull the Nth matching position via the 'index' parameter
+  function getCard(data, posName, index = 0) {
+    const items = data.filter(d => d.pos.toUpperCase() === posName.toUpperCase());
+    const item = items[index] || {};
     return `
       <div class="position-box">
         <div class="position-title">${posName}</div>
@@ -478,15 +491,14 @@
           ${getCard(data, 'RIGHT TACKLE')}
         </div>
         <div class="skill-row">
-          ${getCard(data, 'WIDE RECEIVER (X)')}
+          ${getCard(data, 'WIDE RECEIVER', 0)}
           ${getCard(data, 'QUARTERBACK')}
-          ${getCard(data, 'TIGHT END (Y)')}
-          ${getCard(data, 'WIDE RECEIVER (Z)')}
+          ${getCard(data, 'TIGHT END')}
+          ${getCard(data, 'WIDE RECEIVER', 1)}
         </div>
-        <div style="display:flex; justify-content:center;">
-          <div style="width:260px;">
-            ${getCard(data, 'RUNNING BACK')}
-          </div>
+        <div class="extras-row">
+          <div class="extra-box">${getCard(data, 'RUNNING BACK')}</div>
+          <div class="extra-box">${getCard(data, 'OTHER', 0)}</div>
         </div>
       </div>
     `;
@@ -496,21 +508,44 @@
     return `
       <div class="defense-grid">
         <div class="dline-row">
-          ${getCard(data, 'DEFENSIVE END')}
+          ${getCard(data, 'DEFENSIVE END', 0)}
           ${getCard(data, 'DEFENSIVE TACKLE')}
           ${getCard(data, 'NOSE TACKLE')}
-          ${getCard(data, 'DEFENSIVE END')}
+          ${getCard(data, 'DEFENSIVE END', 1)}
         </div>
         <div class="lb-row">
-          ${getCard(data, 'WILL LB')}
-          ${getCard(data, 'MIKE LB')}
-          ${getCard(data, 'SAM LB')}
+          ${getCard(data, 'LINEBACKER', 0)}
+          ${getCard(data, 'LINEBACKER', 1)}
+          ${getCard(data, 'LINEBACKER', 2)}
         </div>
         <div class="db-row">
-          ${getCard(data, 'CORNERBACK')}
-          ${getCard(data, 'STRONG SAFETY')}
-          ${getCard(data, 'FREE SAFETY')}
-          ${getCard(data, 'CORNERBACK')}
+          ${getCard(data, 'CORNERBACK', 0)}
+          ${getCard(data, 'SAFETY', 0)}
+          ${getCard(data, 'SAFETY', 1)}
+          ${getCard(data, 'CORNERBACK', 1)}
+        </div>
+        <div class="extras-row">
+          <div class="extra-box">${getCard(data, 'OTHER', 0)}</div>
+          <div class="extra-box">${getCard(data, 'OTHER', 1)}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  function buildSpecialTeamsHTML(data = []) {
+    return `
+      <div class="special-grid">
+        <div class="st-row">
+          ${getCard(data, 'KICKER')}
+          ${getCard(data, 'PUNTER')}
+          ${getCard(data, 'LONG SNAPPER')}
+          ${getCard(data, 'HOLDER')}
+        </div>
+        <div class="st-row">
+          ${getCard(data, 'RETURNER', 0)}
+          ${getCard(data, 'RETURNER', 1)}
+          ${getCard(data, 'OTHER', 0)}
+          ${getCard(data, 'OTHER', 1)}
         </div>
       </div>
     `;
@@ -518,16 +553,16 @@
 
   function printBlankSheets() {
     const container = document.getElementById('printableContainer');
-    const originalHTML = container.innerHTML;
-
     const team1 = availableTeams[0] || 'HOME';
     const team2 = availableTeams[1] || 'AWAY';
 
     const sheets = [
       { team: team1, unit: 'OFFENSE' },
       { team: team1, unit: 'DEFENSE' },
+      { team: team1, unit: 'SPECIAL TEAMS' },
       { team: team2, unit: 'OFFENSE' },
-      { team: team2, unit: 'DEFENSE' }
+      { team: team2, unit: 'DEFENSE' },
+      { team: team2, unit: 'SPECIAL TEAMS' }
     ];
 
     let fullOutput = '';
@@ -535,7 +570,10 @@
     sheets.forEach((sheet, idx) => {
       setTeamColors(sheet.team);
       const isPageBreak = idx < sheets.length - 1 ? 'page-break' : '';
-      const gridHTML = sheet.unit === 'OFFENSE' ? buildOffenseHTML([]) : buildDefenseHTML([]);
+      let gridHTML = '';
+      if (sheet.unit === 'OFFENSE') gridHTML = buildOffenseHTML([]);
+      else if (sheet.unit === 'DEFENSE') gridHTML = buildDefenseHTML([]);
+      else gridHTML = buildSpecialTeamsHTML([]);
 
       fullOutput += `
         <div class="${isPageBreak}">
@@ -549,8 +587,6 @@
 
     container.innerHTML = fullOutput;
     window.print();
-
-    // Restore active view after print window finishes
     switchView(currentTeam, currentUnit);
   }
 
@@ -564,10 +600,8 @@
       if (lines.length < 2) return;
 
       const headers = parseCSVLine(lines[0]).map(h => h.toUpperCase());
-      
       let teamIdx = headers.indexOf('TEAM');
       if (teamIdx === -1) teamIdx = 0;
-
       const getIdx = (name) => headers.indexOf(name);
 
       rawData = [];
