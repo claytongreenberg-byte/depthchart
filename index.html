@@ -3,281 +3,352 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Trinity Trojans Offense - Field Depth Chart</title>
+  <title>Live Depth Chart - Offense & Defense</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    :root {
+      /* Default Theme Colors */
+      --team-primary: #003366; 
+      --team-accent: #0055a5;
     }
 
     body {
       font-family: Arial, Helvetica, sans-serif;
-      background-color: #ffffff;
+      background-color: #f4f6f9;
+      margin: 0;
       padding: 20px;
-      color: #000000;
     }
 
-    .chart-header {
+    .controls {
+      max-width: 1100px;
+      margin: 0 auto 20px auto;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 4px solid #003366;
+      background: #ffffff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .tab-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .tab-btn {
+      padding: 8px 16px;
+      border: 2px solid #ccc;
+      background: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+
+    /* Active Tab Themes */
+    .tab-btn.active-home {
+      background: #003366;
+      color: #fff;
+      border-color: #003366;
+    }
+
+    .tab-btn.active-away {
+      background: #880000;
+      color: #fff;
+      border-color: #880000;
+    }
+
+    .chart-header {
+      border-bottom: 4px solid var(--team-primary);
       padding-bottom: 8px;
       margin-bottom: 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     .chart-header h1 {
-      font-size: 28px;
-      font-weight: 900;
-      letter-spacing: 1px;
+      font-size: 26px;
+      color: var(--team-primary);
       text-transform: uppercase;
     }
 
-    .chart-header .meta {
-      font-size: 14px;
-      font-weight: bold;
-    }
-
-    /* Formation Layout Container */
-    .field-container {
-      display: flex;
-      flex-direction: column;
-      gap: 30px;
+    .container {
       max-width: 1100px;
       margin: 0 auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
     }
 
-    /* Offensive Line Row */
+    /* Offense Grid Layout */
+    .offense-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+
     .oline-row {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 12px;
-      border: 6px solid #000000;
+      gap: 10px;
+      background: var(--team-primary);
       padding: 6px;
-      background-color: #000000;
+      border: 4px solid var(--team-primary);
     }
 
-    /* Skill Positions Grid */
     .skill-row {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 20px;
+      gap: 15px;
     }
 
-    .backfield-row {
+    /* Defense Grid Layout */
+    .defense-grid {
       display: flex;
-      justify-content: center;
+      flex-direction: column;
+      gap: 25px;
     }
 
-    .backfield-row .position-box {
-      width: 220px;
+    .dline-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      background: var(--team-primary);
+      padding: 6px;
     }
 
-    /* Individual Position Card Container */
+    .lb-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      padding: 0 50px;
+    }
+
+    .db-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+    }
+
+    /* Universal Position Box */
     .position-box {
-      border: 4px solid #000000;
+      border: 3px solid var(--team-primary);
       background-color: #ffffff;
       display: flex;
       flex-direction: column;
     }
 
     .position-title {
-      background-color: #ffffff;
+      background-color: var(--team-primary);
+      color: #ffffff;
       text-align: center;
       font-size: 11px;
       font-weight: 900;
       text-transform: uppercase;
       padding: 4px 2px;
-      border-bottom: 3px solid #000000;
-      letter-spacing: 0.5px;
     }
 
-    /* Player Slots (Starter on top, Backup below) */
     .player-slot {
       padding: 6px 8px;
-      min-height: 68px;
+      min-height: 62px;
       display: flex;
       flex-direction: column;
       justify-content: center;
     }
 
-    .player-slot:first-of-type {
-      border-bottom: 3px solid #000000;
+    .player-slot.starter {
+      border-bottom: 2px solid #ddd;
     }
 
     .player-header {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
-      margin-bottom: 2px;
     }
 
     .player-number {
-      font-size: 32px;
+      font-size: 26px;
       font-weight: 900;
-      line-height: 0.9;
+      color: var(--team-primary);
     }
 
     .player-class {
       font-size: 11px;
       font-weight: 800;
-      color: #003366;
-      text-transform: uppercase;
+      color: #666;
     }
 
-    /* Dynamic Fitting for Player Names */
     .player-name {
       font-size: 11px;
       font-weight: 900;
       text-transform: uppercase;
-      line-height: 1.15;
       white-space: normal;
       word-wrap: break-word;
-      overflow: visible;
+      line-height: 1.1;
     }
 
     .player-pron {
       font-size: 10px;
       font-weight: 700;
       font-style: italic;
-      color: #003366;
+      color: var(--team-accent);
       margin-top: 2px;
-      line-height: 1;
-    }
-
-    /* CSV Upload Controls Bar */
-    .upload-bar {
-      max-width: 1100px;
-      margin: 0 auto 20px auto;
-      padding: 10px;
-      background: #f4f6f9;
-      border: 1px solid #ccc;
-      display: flex;
-      align-items: center;
-      gap: 15px;
     }
   </style>
 </head>
 <body>
 
-<div class="upload-bar">
-  <label for="csvFile"><strong>Load CSV File:</strong></label>
-  <input type="file" id="csvFile" accept=".csv">
+<div class="controls">
+  <div class="tab-group">
+    <button class="tab-btn active-home" onclick="switchView('Home', 'OFFENSE')">Home Offense</button>
+    <button class="tab-btn" onclick="switchView('Home', 'DEFENSE')">Home Defense</button>
+    <button class="tab-btn" onclick="switchView('Away', 'OFFENSE')">Away Offense</button>
+    <button class="tab-btn" onclick="switchView('Away', 'DEFENSE')">Away Defense</button>
+  </div>
+  <div>
+    <input type="file" id="csvInput" accept=".csv">
+  </div>
 </div>
 
-<div class="field-container">
+<div class="container">
   <div class="chart-header">
-    <h1>TRINITY TROJANS OFFENSE</h1>
-    <div class="meta">HEAD COACH / OC: ____________________</div>
+    <h1 id="chartTitle">HOME OFFENSE</h1>
+    <div id="teamBadge">TEAM DEPTH CHART</div>
   </div>
 
-  <!-- Offensive Line (5 Positions Across) -->
-  <div class="oline-row">
-    <div class="position-box" data-pos="LEFT TACKLE">
-      <div class="position-title">LEFT TACKLE</div>
-      <div class="player-slot starter"></div>
-      <div class="player-slot backup"></div>
-    </div>
-    <div class="position-box" data-pos="LEFT GUARD">
-      <div class="position-title">LEFT GUARD</div>
-      <div class="player-slot starter"></div>
-      <div class="player-slot backup"></div>
-    </div>
-    <div class="position-box" data-pos="CENTER">
-      <div class="position-title">CENTER</div>
-      <div class="player-slot starter"></div>
-      <div class="player-slot backup"></div>
-    </div>
-    <div class="position-box" data-pos="RIGHT GUARD">
-      <div class="position-title">RIGHT GUARD</div>
-      <div class="player-slot starter"></div>
-      <div class="player-slot backup"></div>
-    </div>
-    <div class="position-box" data-pos="RIGHT TACKLE">
-      <div class="position-title">RIGHT TACKLE</div>
-      <div class="player-slot starter"></div>
-      <div class="player-slot backup"></div>
-    </div>
-  </div>
-
-  <!-- Skill Positions Row -->
-  <div class="skill-row">
-    <div class="position-box" data-pos="WIDE RECEIVER (X)">
-      <div class="position-title">WIDE RECEIVER (X)</div>
-      <div class="player-slot starter"></div>
-      <div class="player-slot backup"></div>
-    </div>
-    <div class="position-box" data-pos="QUARTERBACK">
-      <div class="position-title">QUARTERBACK</div>
-      <div class="player-slot starter"></div>
-      <div class="player-slot backup"></div>
-    </div>
-    <div class="position-box" data-pos="TIGHT END (Y)">
-      <div class="position-title">TIGHT END (Y)</div>
-      <div class="player-slot starter"></div>
-      <div class="player-slot backup"></div>
-    </div>
-    <div class="position-box" data-pos="WIDE RECEIVER (Z)">
-      <div class="position-title">WIDE RECEIVER (Z)</div>
-      <div class="player-slot starter"></div>
-      <div class="player-slot backup"></div>
-    </div>
-  </div>
-
-  <!-- Backfield Row -->
-  <div class="backfield-row">
-    <div class="position-box" data-pos="RUNNING BACK">
-      <div class="position-title">RUNNING BACK</div>
-      <div class="player-slot starter"></div>
-      <div class="player-slot backup"></div>
-    </div>
-  </div>
+  <!-- Dynamic Container populated via JavaScript -->
+  <div id="depthChartContent"></div>
 </div>
 
 <script>
-  // Sample Data matching your Trinity dataset with Pronunciations included
-  const defaultData = [
-    { pos: "LEFT TACKLE", sNum: "58", sName: "CAMERON HOWELL", sPron: "", sCl: "JR", bNum: "55", bName: "TYSON BUTLER", bPron: "", bCl: "SR" },
-    { pos: "LEFT GUARD", sNum: "78", sName: "JOSH DIMSDALE", sPron: "", sCl: "JR", bNum: "71", bName: "CAMERON BULLOCK", bPron: "", bCl: "SR" },
-    { pos: "CENTER", sNum: "63", sName: "VILIAMI FINAU", sPron: "vee-lee-AH-mee fee-NOW", sCl: "SR", bNum: "53", bName: "ASHTON CHANTHANOUVONG", bPron: "chan-thah-VONG", bCl: "SR" },
-    { pos: "RIGHT GUARD", sNum: "50", sName: "FILI MOSE", sPron: "FEE-lee MO-say", sCl: "SR", bNum: "60", bName: "JASON MARTENY", bPron: "", bCl: "JR" },
-    { pos: "RIGHT TACKLE", sNum: "74", sName: "KAVA AFUNGIA", sPron: "KAH-vah ah-FOONG-ee-ah", sCl: "JR", bNum: "64", bName: "MIKE FATIAU SILIGA", bPron: "FAH-tee-ow see-LING-ah", bCl: "JR" },
-    { pos: "WIDE RECEIVER (X)", sNum: "81", sName: "CAMERON HAYES", sPron: "", sCl: "SR", bNum: "11", bName: "RICOH SANCHEZ-SMITH", bPron: "", bCl: "SR" },
-    { pos: "QUARTERBACK", sNum: "2", sName: "MACK LINEWEAVER", sPron: "", sCl: "SR", bNum: "3", bName: "CADEN TREVINO", bPron: "truh-VEEN-yo", bCl: "JR" },
-    { pos: "TIGHT END (Y)", sNum: "87", sName: "BRENDON CARY", sPron: "", sCl: "SR", bNum: "9", bName: "KOHEN FIEFIA", bPron: "CO-hen fee-EF-ee-ah", bCl: "SR" },
-    { pos: "WIDE RECEIVER (Z)", sNum: "8", sName: "KEVIN KROMAH", sPron: "CROW-mah", sCl: "SR", bNum: "14", bName: "CARMELLO GRAY", bPron: "", bCl: "SO" },
-    { pos: "RUNNING BACK", sNum: "5", sName: "MARCUS TURNER", sPron: "", sCl: "SR", bNum: "21", bName: "PRINCE NGANDU", bPron: "en-GAHN-doo", bCl: "JR" }
-  ];
+  let rawData = [];
+  let currentTeam = 'Home';
+  let currentUnit = 'OFFENSE';
 
-  function renderSlot(container, num, name, pron, classYr) {
-    if (!name) {
-      container.innerHTML = '';
-      return;
+  // Define Colors for Home vs Away
+  const teamColors = {
+    Home: { primary: '#003366', accent: '#0055a5' }, // Navy Blue
+    Away: { primary: '#880000', accent: '#cc0000' }  # Crimson Red
+  };
+
+  function setTeamColors(team) {
+    const colors = teamColors[team] || teamColors.Home;
+    document.documentElement.style.setProperty('--team-primary', colors.primary);
+    document.documentElement.style.setProperty('--team-accent', colors.accent);
+  }
+
+  function switchView(team, unit) {
+    currentTeam = team;
+    currentUnit = unit;
+    setTeamColors(team);
+
+    // Update active button styles
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.className = 'tab-btn';
+      if (btn.innerText.includes(team) && btn.innerText.includes(unit)) {
+        btn.classList.add(team === 'Home' ? 'active-home' : 'active-away');
+      }
+    });
+
+    document.getElementById('chartTitle').innerText = `${team.toUpperCase()} ${unit.toUpperCase()}`;
+    renderChart();
+  }
+
+  function renderChart() {
+    const content = document.getElementById('depthChartContent');
+    content.innerHTML = '';
+
+    // Filter data for current selection
+    const filtered = rawData.filter(d => 
+      d.team.toLowerCase() === currentTeam.toLowerCase() && 
+      d.unit.toLowerCase() === currentUnit.toLowerCase()
+    );
+
+    if (currentUnit === 'OFFENSE') {
+      content.innerHTML = buildOffenseHTML(filtered);
+    } else {
+      content.innerHTML = buildDefenseHTML(filtered);
     }
+  }
+
+  function buildPlayerSlot(num, name, pron, classYr) {
+    if (!name) return '<div class="player-slot"></div>';
     const pronHtml = pron ? `<div class="player-pron">"${pron}"</div>` : '';
-    container.innerHTML = `
-      <div class="player-header">
-        <span class="player-number">${num || ''}</span>
-        <span class="player-class">${classYr || ''}</span>
+    return `
+      <div class="player-slot">
+        <div class="player-header">
+          <span class="player-number">${num || ''}</span>
+          <span class="player-class">${classYr || ''}</span>
+        </div>
+        <div class="player-name">${name}</div>
+        ${pronHtml}
       </div>
-      <div class="player-name">${name}</div>
-      ${pronHtml}
     `;
   }
 
-  function populateChart(records) {
-    records.forEach(row => {
-      const box = document.querySelector(`.position-box[data-pos="${row.pos}"]`);
-      if (box) {
-        renderSlot(box.querySelector('.starter'), row.sNum, row.sName, row.sPron, row.sCl);
-        renderSlot(box.querySelector('.backup'), row.bNum, row.bName, row.bPron, row.bCl);
-      }
-    });
+  function getCard(data, posName) {
+    const item = data.find(d => d.pos.toUpperCase() === posName.toUpperCase()) || {};
+    return `
+      <div class="position-box">
+        <div class="position-title">${posName}</div>
+        ${buildPlayerSlot(item.sNum, item.sName, item.sPron, item.sCl)}
+        ${buildPlayerSlot(item.bNum, item.bName, item.bPron, item.bCl)}
+      </div>
+    `;
   }
 
-  // Handle CSV Upload and parse columns flexibly by header name
-  document.getElementById('csvFile').addEventListener('change', function(e) {
+  function buildOffenseHTML(data) {
+    return `
+      <div class="offense-grid">
+        <div class="oline-row">
+          ${getCard(data, 'LEFT TACKLE')}
+          ${getCard(data, 'LEFT GUARD')}
+          ${getCard(data, 'CENTER')}
+          ${getCard(data, 'RIGHT GUARD')}
+          ${getCard(data, 'RIGHT TACKLE')}
+        </div>
+        <div class="skill-row">
+          ${getCard(data, 'WIDE RECEIVER (X)')}
+          ${getCard(data, 'QUARTERBACK')}
+          ${getCard(data, 'TIGHT END (Y)')}
+          ${getCard(data, 'WIDE RECEIVER (Z)')}
+        </div>
+        <div style="display:flex; justify-content:center;">
+          <div style="width:230px;">
+            ${getCard(data, 'RUNNING BACK')}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function buildDefenseHTML(data) {
+    return `
+      <div class="defense-grid">
+        <div class="dline-row">
+          ${getCard(data, 'DEFENSIVE END')}
+          ${getCard(data, 'DEFENSIVE TACKLE')}
+          ${getCard(data, 'NOSE TACKLE')}
+          ${getCard(data, 'DEFENSIVE END')}
+        </div>
+        <div class="lb-row">
+          ${getCard(data, 'WILL LB')}
+          ${getCard(data, 'MIKE LB')}
+          ${getCard(data, 'SAM LB')}
+        </div>
+        <div class="db-row">
+          ${getCard(data, 'CORNERBACK')}
+          ${getCard(data, 'STRONG SAFETY')}
+          ${getCard(data, 'FREE SAFETY')}
+          ${getCard(data, 'CORNERBACK')}
+        </div>
+      </div>
+    `;
+  }
+
+  // Parse Uploaded CSV File
+  document.getElementById('csvInput').addEventListener('change', function(e) {
     const file = e.target.files[0];
     if (!file) return;
 
@@ -287,42 +358,31 @@
       if (lines.length < 2) return;
 
       const headers = lines[0].split(',').map(h => h.trim().toUpperCase());
-      
       const getIdx = (name) => headers.indexOf(name);
-      const posIdx = getIdx('POSITION');
-      const sNumIdx = getIdx('STARTER_NUM');
-      const sNameIdx = getIdx('STARTER_NAME');
-      const sPronIdx = getIdx('STARTER_PRON');
-      const sClIdx = getIdx('STARTER_CL');
-      const bNumIdx = getIdx('BACKUP_NUM');
-      const bNameIdx = getIdx('BACKUP_NAME');
-      const bPronIdx = getIdx('BACKUP_PRON');
-      const bClIdx = getIdx('BACKUP_CL');
 
-      const records = [];
+      rawData = [];
       for (let i = 1; i < lines.length; i++) {
         const cols = lines[i].split(',').map(c => c.trim().replace(/^"(.*)"$/, '$1'));
-        if (cols[posIdx]) {
-          records.push({
-            pos: cols[posIdx],
-            sNum: cols[sNumIdx] || '',
-            sName: cols[sNameIdx] || '',
-            sPron: sPronIdx !== -1 ? cols[sPronIdx] : '',
-            sCl: cols[sClIdx] || '',
-            bNum: cols[bNumIdx] || '',
-            bName: cols[bNameIdx] || '',
-            bPron: bPronIdx !== -1 ? cols[bPronIdx] : '',
-            bCl: cols[bClIdx] || ''
+        if (cols[getIdx('POSITION')]) {
+          rawData.push({
+            team: cols[getIdx('TEAM')] || 'Home',
+            unit: cols[getIdx('UNIT')] || 'OFFENSE',
+            pos: cols[getIdx('POSITION')],
+            sNum: cols[getIdx('STARTER_NUM')],
+            sName: cols[getIdx('STARTER_NAME')],
+            sPron: cols[getIdx('STARTER_PRON')] || '',
+            sCl: cols[getIdx('STARTER_CL')],
+            bNum: cols[getIdx('BACKUP_NUM')],
+            bName: cols[getIdx('BACKUP_NAME')],
+            bPron: cols[getIdx('BACKUP_PRON')] || '',
+            bCl: cols[getIdx('BACKUP_CL')]
           });
         }
       }
-      populateChart(records);
+      renderChart();
     };
     reader.readAsText(file);
   });
-
-  // Load default dataset on boot
-  populateChart(defaultData);
 </script>
 
 </body>
