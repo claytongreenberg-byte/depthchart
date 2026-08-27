@@ -6,7 +6,6 @@
   <title>Live Depth Chart - Offense & Defense</title>
   <style>
     :root {
-      /* Default Theme Colors */
       --team-primary: #003366; 
       --team-accent: #0055a5;
     }
@@ -45,7 +44,6 @@
       transition: all 0.2s ease;
     }
 
-    /* Active Tab Themes */
     .tab-btn.active-home {
       background: #003366;
       color: #fff;
@@ -70,6 +68,7 @@
     .chart-header h1 {
       font-size: 26px;
       color: var(--team-primary);
+      margin: 0;
       text-transform: uppercase;
     }
 
@@ -81,11 +80,11 @@
       border-radius: 8px;
     }
 
-    /* Offense Grid Layout */
-    .offense-grid {
+    /* Layout Grids */
+    .offense-grid, .defense-grid {
       display: flex;
       flex-direction: column;
-      gap: 25px;
+      gap: 20px;
     }
 
     .oline-row {
@@ -94,20 +93,12 @@
       gap: 10px;
       background: var(--team-primary);
       padding: 6px;
-      border: 4px solid var(--team-primary);
     }
 
     .skill-row {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 15px;
-    }
-
-    /* Defense Grid Layout */
-    .defense-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 25px;
     }
 
     .dline-row {
@@ -122,7 +113,7 @@
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 15px;
-      padding: 0 50px;
+      padding: 0 40px;
     }
 
     .db-row {
@@ -131,7 +122,7 @@
       gap: 15px;
     }
 
-    /* Universal Position Box */
+    /* Player Cards */
     .position-box {
       border: 3px solid var(--team-primary);
       background-color: #ffffff;
@@ -151,7 +142,7 @@
 
     .player-slot {
       padding: 6px 8px;
-      min-height: 62px;
+      min-height: 60px;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -168,7 +159,7 @@
     }
 
     .player-number {
-      font-size: 26px;
+      font-size: 24px;
       font-weight: 900;
       color: var(--team-primary);
     }
@@ -183,7 +174,6 @@
       font-size: 11px;
       font-weight: 900;
       text-transform: uppercase;
-      white-space: normal;
       word-wrap: break-word;
       line-height: 1.1;
     }
@@ -201,10 +191,10 @@
 
 <div class="controls">
   <div class="tab-group">
-    <button class="tab-btn active-home" onclick="switchView('Home', 'OFFENSE')">Home Offense</button>
-    <button class="tab-btn" onclick="switchView('Home', 'DEFENSE')">Home Defense</button>
-    <button class="tab-btn" onclick="switchView('Away', 'OFFENSE')">Away Offense</button>
-    <button class="tab-btn" onclick="switchView('Away', 'DEFENSE')">Away Defense</button>
+    <button class="tab-btn active-home" data-team="Home" data-unit="OFFENSE">Home Offense</button>
+    <button class="tab-btn" data-team="Home" data-unit="DEFENSE">Home Defense</button>
+    <button class="tab-btn" data-team="Away" data-unit="OFFENSE">Away Offense</button>
+    <button class="tab-btn" data-team="Away" data-unit="DEFENSE">Away Defense</button>
   </div>
   <div>
     <input type="file" id="csvInput" accept=".csv">
@@ -214,10 +204,7 @@
 <div class="container">
   <div class="chart-header">
     <h1 id="chartTitle">HOME OFFENSE</h1>
-    <div id="teamBadge">TEAM DEPTH CHART</div>
   </div>
-
-  <!-- Dynamic Container populated via JavaScript -->
   <div id="depthChartContent"></div>
 </div>
 
@@ -226,11 +213,19 @@
   let currentTeam = 'Home';
   let currentUnit = 'OFFENSE';
 
-  // Define Colors for Home vs Away
   const teamColors = {
-    Home: { primary: '#003366', accent: '#0055a5' }, // Navy Blue
-    Away: { primary: '#880000', accent: '#cc0000' }  # Crimson Red
+    Home: { primary: '#003366', accent: '#0055a5' },
+    Away: { primary: '#880000', accent: '#cc0000' }
   };
+
+  // Attach button click events cleanly
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const team = this.getAttribute('data-team');
+      const unit = this.getAttribute('data-unit');
+      switchView(team, unit);
+    });
+  });
 
   function setTeamColors(team) {
     const colors = teamColors[team] || teamColors.Home;
@@ -243,10 +238,9 @@
     currentUnit = unit;
     setTeamColors(team);
 
-    // Update active button styles
     document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.className = 'tab-btn';
-      if (btn.innerText.includes(team) && btn.innerText.includes(unit)) {
+      if (btn.getAttribute('data-team') === team && btn.getAttribute('data-unit') === unit) {
         btn.classList.add(team === 'Home' ? 'active-home' : 'active-away');
       }
     });
@@ -255,11 +249,27 @@
     renderChart();
   }
 
+  // Parse CSV rows cleanly even with quotes and commas
+  function parseCSVLine(text) {
+    let ret = [''];
+    let inQuote = false;
+    for (let i = 0; i < text.length; i++) {
+      let c = text[i];
+      if (c === '"') {
+        inQuote = !inQuote;
+      } else if (c === ',' && !inQuote) {
+        ret.push('');
+      } else {
+        ret[ret.length - 1] += c;
+      }
+    }
+    return ret.map(val => val.replace(/^"|"$/g, '').trim());
+  }
+
   function renderChart() {
     const content = document.getElementById('depthChartContent');
     content.innerHTML = '';
 
-    // Filter data for current selection
     const filtered = rawData.filter(d => 
       d.team.toLowerCase() === currentTeam.toLowerCase() && 
       d.unit.toLowerCase() === currentUnit.toLowerCase()
@@ -272,11 +282,11 @@
     }
   }
 
-  function buildPlayerSlot(num, name, pron, classYr) {
-    if (!name) return '<div class="player-slot"></div>';
+  function buildPlayerSlot(num, name, pron, classYr, isStarter) {
+    if (!name) return `<div class="player-slot ${isStarter ? 'starter' : ''}"></div>`;
     const pronHtml = pron ? `<div class="player-pron">"${pron}"</div>` : '';
     return `
-      <div class="player-slot">
+      <div class="player-slot ${isStarter ? 'starter' : ''}">
         <div class="player-header">
           <span class="player-number">${num || ''}</span>
           <span class="player-class">${classYr || ''}</span>
@@ -292,8 +302,8 @@
     return `
       <div class="position-box">
         <div class="position-title">${posName}</div>
-        ${buildPlayerSlot(item.sNum, item.sName, item.sPron, item.sCl)}
-        ${buildPlayerSlot(item.bNum, item.bName, item.bPron, item.bCl)}
+        ${buildPlayerSlot(item.sNum, item.sName, item.sPron, item.sCl, true)}
+        ${buildPlayerSlot(item.bNum, item.bName, item.bPron, item.bCl, false)}
       </div>
     `;
   }
@@ -347,22 +357,21 @@
     `;
   }
 
-  // Parse Uploaded CSV File
   document.getElementById('csvInput').addEventListener('change', function(e) {
     const file = e.target.files[0];
     if (!file) return;
 
     const reader = new FileReader();
     reader.onload = function(evt) {
-      const lines = evt.target.result.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+      const lines = evt.target.result.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
       if (lines.length < 2) return;
 
-      const headers = lines[0].split(',').map(h => h.trim().toUpperCase());
+      const headers = parseCSVLine(lines[0]).map(h => h.toUpperCase());
       const getIdx = (name) => headers.indexOf(name);
 
       rawData = [];
       for (let i = 1; i < lines.length; i++) {
-        const cols = lines[i].split(',').map(c => c.trim().replace(/^"(.*)"$/, '$1'));
+        const cols = parseCSVLine(lines[i]);
         if (cols[getIdx('POSITION')]) {
           rawData.push({
             team: cols[getIdx('TEAM')] || 'Home',
